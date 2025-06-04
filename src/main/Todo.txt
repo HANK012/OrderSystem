@@ -1,0 +1,97 @@
+你要做的 **餐廳點餐系統 Order Management System**，我們將它設計為一個**具備後台管理、顧客點餐流程、訂單狀態管理、MySQL 資料持久化、RESTful API** 的完整 Spring Boot 專案。以下是詳細需求：
+
+---
+
+## ✅ 一、使用角色（User Roles）
+
+| 角色       | 權限           |
+| -------- | ------------ |
+| Admin    | 菜單管理、訂單管理    |
+| Customer | 瀏覽菜單、點餐、查詢訂單 |
+
+---
+
+##  二、主要功能需求
+
+### 📋 1. 菜單管理（Admin）
+
+* 新增/修改/刪除菜單項目（品項名稱、價格、分類、是否上架）
+* 查詢所有菜單（含已下架）
+* 顯示：分類（ex. 主餐、飲料）、價格、是否上架
+
+### 🛒 2. 顧客點餐（Customer）
+
+* 查詢目前可點的菜單（上架中）
+* 新增一筆訂單（選擇多道菜色）
+* 每筆訂單可包含多個餐點項目（訂單明細）
+* 顧客需提供名稱（或桌號）
+
+### 🔄 3. 訂單狀態流轉（Admin）
+
+* 查詢所有訂單（含狀態）
+* 更新訂單狀態：
+
+  * **已接單 → 製作中 → 完成**
+  * 可自由跳轉下一步
+* 每筆訂單含：顧客名稱、餐點明細、總金額、狀態、時間戳記
+
+### 📈 4. 統計（選做）
+
+* 查詢每日總訂單數、總營收
+* 熱門餐點排行（用 Redis 快取可再強化）
+
+---
+
+## ✅ 三、資料表設計（ER Diagram）
+
+```
+CustomerOrder
+- id (PK)
+- customerName
+- totalAmount
+- orderStatus (enum: RECEIVED, PREPARING, DONE)
+- createdAt
+
+OrderItem
+- id (PK)
+- order_id (FK → CustomerOrder)
+- menu_item_id (FK → MenuItem)
+- quantity
+- priceAtOrder
+
+MenuItem
+- id (PK)
+- name
+- price
+- category (ex. 主餐、飲料)
+- isAvailable (boolean)
+- createdAt
+```
+
+---
+
+## ✅ 四、API 規格設計（部分示意）
+
+| Method   | Path                 | 說明           |
+| -------- | -------------------- | ------------ |
+| `GET`    | `/menu`              | 查詢可點餐品項      |
+| `POST`   | `/order`             | 顧客建立新訂單      |
+| `GET`    | `/order/{id}`        | 查詢單一訂單明細     |
+| `PUT`    | `/order/{id}/status` | 更新訂單狀態       |
+| `GET`    | `/admin/menu`        | 管理端查詢全部菜單    |
+| `POST`   | `/admin/menu`        | 新增菜單品項       |
+| `PUT`    | `/admin/menu/{id}`   | 修改菜單         |
+| `DELETE` | `/admin/menu/{id}`   | 刪除菜單（或標記為下架） |
+
+---
+
+
+---
+
+要開始的話，我可以：
+
+* 幫你建立目錄結構（MVC + DTO + Repository）
+* 產出 `MenuItem` 和 `CustomerOrder` 的 CRUD 基本程式碼
+* 提供 Postman 測試腳本範例
+
+要先從哪個部分開始？例如：先從 `MenuItem` CRUD 開始建立？
